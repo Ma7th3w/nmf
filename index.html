@@ -44,8 +44,9 @@
   #wall::-webkit-scrollbar{width:6px} #wall::-webkit-scrollbar-thumb{background:#333}
   .card{
     background:var(--card); border:0; border-left:8px solid #333; border-radius:0;
-    padding:20px 22px 14px; position:relative; cursor:pointer;
+    padding:20px 22px 14px; position:relative;
   }
+  body.wall .card, body.admin .card{cursor:pointer}
   .card.anim{animation:slam .32s cubic-bezier(.1,.9,.2,1) both}
   .card .msg{font-size:26px; line-height:1.35; font-weight:800; word-break:keep-all; overflow-wrap:anywhere; white-space:pre-wrap}
   .card .meta{margin-top:12px; display:flex; justify-content:space-between; color:var(--muted); font-size:14px}
@@ -84,6 +85,7 @@
   footer button:disabled{opacity:.4; cursor:default}
   footer button:active{transform:scale(.97)}
   #left{position:absolute; right:40px; bottom:4px; color:#555; font-size:12px}
+  #left.over{color:var(--accent); font-weight:700}
 
   /* ─── 논의 모드 ─── */
   body.focusing .card{opacity:.28; transition:opacity .25s}
@@ -160,7 +162,7 @@
 <div id="focusbar"><b id="fpos">1 / 1</b><span>← → 이동</span><span>Space 논의함 표시</span><span>Esc 나가기</span></div>
 
 <footer>
-  <input id="text" placeholder="의견 남기기 (100자)" maxlength="100" autocomplete="off">
+  <input id="text" placeholder="의견 남기기 (200자까지)" maxlength="200" autocomplete="off">
   <button id="send">올리기</button>
   <span id="left"></span>
 </footer>
@@ -236,7 +238,7 @@
   cfg.child('locked').on('value', snap => {
     locked = !!snap.val();
     text.disabled = locked; sendBtn.disabled = locked;
-    text.placeholder = locked ? '의견 접수가 마감되었습니다' : '의견 남기기 (100자)';
+    text.placeholder = locked ? '의견 접수가 마감되었습니다' : '의견 남기기 (200자까지)';
     document.getElementById('lockBtn').classList.toggle('on', locked);
     document.getElementById('lockBtn').textContent = locked ? '입력 잠금 해제' : '입력 잠금';
   });
@@ -252,14 +254,19 @@
     const t = text.value.trim();
     if(!t || t.length<2 || locked || sending) return;
     sending = true; sendBtn.disabled = true;
-    msgs.push({text: t.slice(0,100), ts: firebase.database.ServerValue.TIMESTAMP, done:false})
+    msgs.push({text: t.slice(0,200), ts: firebase.database.ServerValue.TIMESTAMP, done:false})
       .then(()=>{ text.value=''; leftUpdate(); })
       .catch(()=>alert('전송 실패. 다시 시도해 주세요.'))
       .finally(()=>{ sending=false; sendBtn.disabled = locked; text.focus(); });
   }
   sendBtn.onclick = send;
   text.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); } });
-  const leftUpdate = () => document.getElementById('left').textContent = text.value.length + ' / 100';
+  const leftEl = document.getElementById('left');
+  const leftUpdate = () => {
+    const n = text.value.length, max = 200;
+    leftEl.textContent = n >= max ? '200자까지만 입력할 수 있습니다' : n + ' / ' + max;
+    leftEl.classList.toggle('over', n >= max);
+  };
   text.addEventListener('input', leftUpdate); leftUpdate();
 
   // ── 논의 모드 (빔 화면 전용) ──
@@ -282,13 +289,14 @@
       if(confirm('이 의견을 삭제할까요?')) msgs.child(c.dataset.id).remove();
       return;
     }
-    if(isPhone()) return;
+    if(!priv() || isPhone()) return;
     const i = cards().indexOf(c);
     if(document.body.classList.contains('focusing') && i===focusIdx) toggleDone(c);
     else setFocus(i);
   });
+  const priv = () => location.hash==='#wall' || location.hash==='#admin';
   document.addEventListener('keydown', e=>{
-    if(document.activeElement===text) return;
+    if(document.activeElement===text || !priv()) return;
     if(e.key==='ArrowRight'){ e.preventDefault(); setFocus(focusIdx<0 ? 0 : focusIdx+1); }
     else if(e.key==='ArrowLeft'){ e.preventDefault(); setFocus(focusIdx<0 ? 0 : focusIdx-1); }
     else if(e.key===' ' && focusIdx>=0){ e.preventDefault(); toggleDone(cards()[focusIdx]); }
@@ -301,6 +309,7 @@
     const h = location.hash;
     document.body.classList.toggle('wall', h==='#wall');
     document.body.classList.toggle('admin', h==='#admin');
+    if(!priv()) exitFocus();
   }
   applyMode(); window.addEventListener('hashchange', applyMode);
   document.getElementById('lockBtn').onclick = () => cfg.child('locked').set(!locked);
