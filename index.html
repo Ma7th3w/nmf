@@ -150,6 +150,7 @@
 
 <div id="conn">연결 중…</div>
 <div id="adminbar">
+  <button id="dlBtn">엑셀로 다운로드</button>
   <button id="lockBtn">입력 잠금</button>
   <button id="clearBtn">전체 초기화</button>
 </div>
@@ -313,6 +314,30 @@
   }
   applyMode(); window.addEventListener('hashchange', applyMode);
   document.getElementById('lockBtn').onclick = () => cfg.child('locked').set(!locked);
+  document.getElementById('dlBtn').onclick = () => {
+    const btn = document.getElementById('dlBtn'); btn.disabled = true; btn.textContent = '만드는 중…';
+    const run = () => msgs.once('value', snap => {
+      const rows = [['번호','시각','의견','논의함']];
+      let n = 0;
+      snap.forEach(ch => {
+        const m = ch.val()||{}; n++;
+        const d = new Date(m.ts||0);
+        const when = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+hhmm(m.ts);
+        rows.push([n, when, m.text||'', m.done?'O':'']);
+      });
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [{wch:6},{wch:18},{wch:80},{wch:8}];
+      const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, '의견');
+      const t = new Date();
+      XLSX.writeFile(wb, '노조원_의견_'+t.getFullYear()+String(t.getMonth()+1).padStart(2,'0')+String(t.getDate()).padStart(2,'0')+'_'+String(t.getHours()).padStart(2,'0')+String(t.getMinutes()).padStart(2,'0')+'.xlsx');
+      btn.disabled = false; btn.textContent = '엑셀로 다운로드';
+    });
+    if(window.XLSX) return run();
+    const sc = document.createElement('script');
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    sc.onload = run; sc.onerror = () => { alert('엑셀 모듈을 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.'); btn.disabled=false; btn.textContent='엑셀로 다운로드'; };
+    document.head.appendChild(sc);
+  };
   document.getElementById('clearBtn').onclick = () => {
     if(confirm('올라온 의견을 전부 지웁니다. 되돌릴 수 없습니다. 진행할까요?')) msgs.remove();
   };
