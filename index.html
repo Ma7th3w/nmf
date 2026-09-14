@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>국립박물관문화재단 노조원들의 의견</title>
+<style>
+  :root{
+    --bg:#0a0a0a; --card:#161616; --card-new:#1c1010;
+    --ink:#f5f5f5; --muted:#8a8a8a; --accent:#ff4d4d; --accent2:#ffb84d;
+    --shadow:0 20px 50px rgba(0,0,0,.45);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:#0a0a0a;
+    background-image:repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 48px);
+    color:var(--ink); font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+    overflow:hidden;
+  }
+
+  /* ─── 상단 헤더 ─── */
+  header{
+    position:fixed; inset:0 0 auto 0; height:96px; padding:0 40px;
+    display:flex; align-items:center; justify-content:space-between; z-index:10;
+    background:linear-gradient(to bottom, rgba(10,10,10,.97), rgba(10,10,10,0));
+  }
+  h1{margin:0; font-size:46px; letter-spacing:-1.5px; font-weight:900; display:flex; align-items:center; gap:18px}
+  h1::before{content:""; width:14px; height:56px; background:var(--accent); flex:none}
+  h1 strong{color:var(--accent)}
+  h1 small{display:block; font-size:15px; color:var(--muted); font-weight:500; margin-top:6px; letter-spacing:0}
+  .counter{display:flex; align-items:baseline; gap:10px; flex:none}
+  .counter b{font-size:72px; font-weight:900; color:var(--accent); line-height:1; display:inline-block;
+             transition:transform .15s; font-variant-numeric:tabular-nums}
+  .counter b.tick{transform:scale(1.25) translateY(-4px)}
+  .counter span{color:var(--muted); font-size:16px}
+
+  /* ─── 벽 ─── */
+  #wall{
+    position:absolute; inset:96px 0 120px 0; padding:8px 40px 20px;
+    display:grid; grid-template-columns:repeat(3,1fr); gap:18px; align-content:start;
+    overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:#333 transparent;
+  }
+  #wall::-webkit-scrollbar{width:6px} #wall::-webkit-scrollbar-thumb{background:#333}
+  .card{
+    background:var(--card); border:0; border-left:8px solid #333; border-radius:0;
+    padding:20px 22px 14px; position:relative; cursor:pointer;
+  }
+  .card.anim{animation:slam .32s cubic-bezier(.1,.9,.2,1) both}
+  .card .msg{font-size:26px; line-height:1.35; font-weight:800; word-break:keep-all; overflow-wrap:anywhere; white-space:pre-wrap}
+  .card .meta{margin-top:12px; display:flex; justify-content:space-between; color:var(--muted); font-size:14px}
+  .card.new{
+    background:var(--card-new); border-left-color:var(--accent);
+    animation:slam .32s cubic-bezier(.1,.9,.2,1) both, glow 1s steps(2,jump-none) 3;
+  }
+  .card.new::before{
+    content:"NEW"; position:absolute; top:0; right:0; background:var(--accent); color:#fff;
+    font-size:12px; font-weight:900; padding:4px 10px; letter-spacing:2px;
+  }
+  @keyframes slam{0%{opacity:0; transform:translateX(-40px) scaleX(1.06)} 100%{opacity:1; transform:none}}
+  @keyframes glow{0%,100%{background:var(--card-new)} 50%{background:#3a1212}}
+
+  /* ─── 헤드라인 띠 ─── */
+  #spot{
+    position:fixed; left:0; right:0; top:50%; transform:translateY(-50%) translateX(-100%); z-index:20;
+    padding:40px 60px; background:var(--accent); color:#fff;
+    opacity:0; pointer-events:none; transition:opacity .2s, transform .3s cubic-bezier(.1,.9,.2,1);
+    box-shadow:0 30px 80px rgba(0,0,0,.7);
+  }
+  #spot.show{opacity:1; transform:translateY(-50%) translateX(0)}
+  #spot .msg{font-size:56px; font-weight:900; line-height:1.2; letter-spacing:-1px; word-break:keep-all; overflow-wrap:anywhere; max-width:1400px}
+
+  /* ─── 하단 입력 ─── */
+  footer{
+    position:fixed; inset:auto 0 0 0; height:120px; padding:0 40px; z-index:10;
+    display:flex; align-items:center; gap:14px;
+    background:linear-gradient(to top, rgba(10,10,10,.98) 60%, rgba(10,10,10,0));
+  }
+  footer input, footer button{font:inherit; border-radius:0; border:2px solid #333}
+  footer input{background:rgba(255,255,255,.06); color:var(--ink); padding:16px 18px; font-size:18px; outline:none; flex:1; min-width:0}
+  footer input:focus{border-color:var(--accent)}
+  footer input:disabled{opacity:.5}
+  footer button{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:900; padding:16px 30px; cursor:pointer; font-size:18px; letter-spacing:1px; flex:none}
+  footer button:disabled{opacity:.4; cursor:default}
+  footer button:active{transform:scale(.97)}
+  #left{position:absolute; right:40px; bottom:4px; color:#555; font-size:12px}
+
+  /* ─── 논의 모드 ─── */
+  body.focusing .card{opacity:.28; transition:opacity .25s}
+  body.focusing .card.focus{opacity:1; transform:scale(1.03); z-index:2;
+    border-left-color:var(--accent); background:#221010; box-shadow:0 0 0 3px var(--accent), 0 30px 60px rgba(0,0,0,.6)}
+  body.focusing .card.focus .msg{font-size:34px}
+  .card.done{border-left-color:#2e7d4f}
+  .card.done::after{content:"✓ 논의함"; position:absolute; top:0; right:0; background:#2e7d4f; color:#fff;
+    font-size:12px; font-weight:900; padding:4px 10px; letter-spacing:1px}
+  .card.done.new::before{display:none}
+  #focusbar{position:fixed; left:50%; bottom:130px; transform:translateX(-50%); z-index:12; display:none;
+    background:#000; border:2px solid var(--accent); color:var(--ink); padding:10px 18px; font-size:15px; font-weight:700; gap:18px}
+  body.focusing #focusbar{display:flex}
+  body.wall #focusbar{bottom:50px}
+  #focusbar span{color:var(--muted); font-weight:500}
+  #focusbar b{color:var(--accent)}
+
+  /* ─── 빔 화면 모드 (#wall 또는 H 키) ─── */
+  body.wall footer{display:none}
+  body.wall #wall{inset:96px 0 40px 0}
+  body.wall #hint{display:block}
+  #hint{display:none; position:fixed; left:40px; bottom:12px; color:#444; font-size:12px; z-index:10}
+
+  /* ─── 관리자 모드 (#admin) ─── */
+  .card .del{display:none; position:absolute; left:-8px; bottom:-2px; background:#333; color:#fff; border:0; font:inherit; font-size:12px; padding:3px 8px; cursor:pointer}
+  body.admin .card .del{display:block}
+  body.admin .card.done::after, body.admin .card.new::before{right:0}
+  #adminbar{display:none; position:fixed; top:100px; right:40px; z-index:12; gap:8px}
+  body.admin #adminbar{display:flex}
+  #adminbar button{font:inherit; font-size:13px; font-weight:700; padding:8px 12px; background:#000; color:var(--ink); border:2px solid #444; cursor:pointer}
+  #adminbar button.on{border-color:var(--accent); color:var(--accent)}
+
+  /* 빈 상태 · 연결 상태 */
+  #empty{position:absolute; inset:0; display:grid; place-items:center; color:var(--muted); font-size:22px; pointer-events:none}
+  #conn{position:fixed; left:40px; top:100px; z-index:12; font-size:12px; color:#555}
+  #conn.bad{color:var(--accent)}
+
+  /* ─── 폰 ─── */
+  @media (max-width:1100px){#wall{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:640px){
+    header{height:auto; padding:14px 16px; position:static; background:none; display:block}
+    h1{font-size:22px; gap:10px; letter-spacing:-.5px} h1::before{width:8px; height:34px}
+    h1 small{font-size:12px}
+    .counter{margin-top:6px} .counter b{font-size:28px} .counter span{font-size:12px}
+    #wall{position:fixed; inset:104px 0 84px 0; grid-template-columns:1fr; padding:8px 16px; gap:10px}
+    .card{padding:14px 14px 10px; border-left-width:6px} .card .msg{font-size:17px} .card .meta{font-size:12px; margin-top:8px}
+    #spot{padding:20px 18px} #spot .msg{font-size:24px}
+    footer{height:84px; padding:0 12px; gap:8px}
+    footer input{padding:12px 12px; font-size:16px} footer button{padding:12px 16px; font-size:15px}
+    #left{right:12px; bottom:2px}
+    #hint, #focusbar, #conn{display:none !important}
+    body.focusing .card{opacity:1} body.focusing .card.focus{transform:none; box-shadow:none} body.focusing .card.focus .msg{font-size:17px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span>국립박물관문화재단 <strong>노조원들의 의견</strong><small>폰으로 남기면 이 화면에 바로 올라옵니다 · 익명</small></span></h1>
+  <div class="counter"><b id="count">0</b><span>건의 의견</span></div>
+</header>
+
+<div id="conn">연결 중…</div>
+<div id="adminbar">
+  <button id="lockBtn">입력 잠금</button>
+  <button id="clearBtn">전체 초기화</button>
+</div>
+
+<div id="wall"><div id="empty">첫 의견을 기다리고 있습니다…</div></div>
+
+<div id="spot"><div class="msg"></div></div>
+
+<div id="hint">H 키: 입력창 표시/숨김 · 카드 클릭 또는 → 키: 하나씩 짚어가며 논의 · Space: 논의함 표시</div>
+<div id="focusbar"><b id="fpos">1 / 1</b><span>← → 이동</span><span>Space 논의함 표시</span><span>Esc 나가기</span></div>
+
+<footer>
+  <input id="text" placeholder="의견 남기기 (100자)" maxlength="100" autocomplete="off">
+  <button id="send">올리기</button>
+  <span id="left"></span>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script>
+  // ── Firebase ──
+  firebase.initializeApp({
+    apiKey: "AIzaSyA0y8IR9HWuh11IYfMa8eWh57GCSgI5IjQ",
+    authDomain: "nmfnmf-9e3e0.firebaseapp.com",
+    databaseURL: "https://nmfnmf-9e3e0-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "nmfnmf-9e3e0",
+    storageBucket: "nmfnmf-9e3e0.firebasestorage.app",
+    messagingSenderId: "758942522691",
+    appId: "1:758942522691:web:92a7d3eace6e3c568a63f6"
+  });
+  const db = firebase.database();
+  const msgs = db.ref('messages');
+  const cfg  = db.ref('config');
+
+  // ── DOM ──
+  const wall = document.getElementById('wall');
+  const empty = document.getElementById('empty');
+  const countEl = document.getElementById('count');
+  const spot = document.getElementById('spot');
+  const text = document.getElementById('text');
+  const sendBtn = document.getElementById('send');
+  const conn = document.getElementById('conn');
+  const isPhone = () => window.innerWidth <= 640;
+  let spotTimer = null, ready = false, locked = false;
+
+  function esc(s){return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+  function hhmm(ts){const d=new Date(ts||Date.now());return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+  const cards = () => [...wall.querySelectorAll('.card')];
+  function updateCount(){ const n=cards().length; countEl.textContent=n; empty.style.display = n?'none':'grid'; }
+
+  // ── 카드 렌더 ──
+  function render(id, m, live){
+    const card = document.createElement('div');
+    card.className = 'card' + (live ? ' new' : ' anim') + (m.done ? ' done' : '');
+    card.dataset.id = id;
+    card.innerHTML = `<div class="msg">${esc(m.text)}</div>
+                      <div class="meta"><span></span><span>${hhmm(m.ts)}</span></div>
+                      <button class="del" title="삭제">삭제</button>`;
+    wall.prepend(card);
+    updateCount();
+    if(!live) return;
+
+    if(focusIdx>=0){ focusIdx++; fposUpdate(); }
+    else wall.scrollTo({top:0, behavior:'smooth'});
+    setTimeout(()=>card.classList.remove('new'), 5000);
+    countEl.classList.add('tick'); setTimeout(()=>countEl.classList.remove('tick'), 250);
+    if(!isPhone()){
+      spot.querySelector('.msg').textContent = m.text;
+      spot.classList.add('show');
+      clearTimeout(spotTimer); spotTimer = setTimeout(()=>spot.classList.remove('show'), 5000);
+    }
+  }
+
+  // ── 실시간 구독 ──
+  msgs.on('child_added', snap => render(snap.key, snap.val()||{}, ready));
+  msgs.once('value', () => { ready = true; updateCount(); });
+  msgs.on('child_removed', snap => {
+    const c = wall.querySelector(`.card[data-id="${snap.key}"]`); if(!c) return;
+    const i = cards().indexOf(c); c.remove(); updateCount();
+    if(focusIdx>=0){ if(i<focusIdx) focusIdx--; else if(i===focusIdx) exitFocus(); fposUpdate(); }
+  });
+  msgs.on('child_changed', snap => {
+    const c = wall.querySelector(`.card[data-id="${snap.key}"]`); if(!c) return;
+    c.classList.toggle('done', !!(snap.val()||{}).done);
+  });
+  cfg.child('locked').on('value', snap => {
+    locked = !!snap.val();
+    text.disabled = locked; sendBtn.disabled = locked;
+    text.placeholder = locked ? '의견 접수가 마감되었습니다' : '의견 남기기 (100자)';
+    document.getElementById('lockBtn').classList.toggle('on', locked);
+    document.getElementById('lockBtn').textContent = locked ? '입력 잠금 해제' : '입력 잠금';
+  });
+  db.ref('.info/connected').on('value', snap => {
+    const ok = !!snap.val();
+    conn.textContent = ok ? '● 실시간 연결됨' : '○ 연결 끊김 — 재접속 중';
+    conn.classList.toggle('bad', !ok);
+  });
+
+  // ── 입력 ──
+  let sending = false;
+  function send(){
+    const t = text.value.trim();
+    if(!t || t.length<2 || locked || sending) return;
+    sending = true; sendBtn.disabled = true;
+    msgs.push({text: t.slice(0,100), ts: firebase.database.ServerValue.TIMESTAMP, done:false})
+      .then(()=>{ text.value=''; leftUpdate(); })
+      .catch(()=>alert('전송 실패. 다시 시도해 주세요.'))
+      .finally(()=>{ sending=false; sendBtn.disabled = locked; text.focus(); });
+  }
+  sendBtn.onclick = send;
+  text.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); } });
+  const leftUpdate = () => document.getElementById('left').textContent = text.value.length + ' / 100';
+  text.addEventListener('input', leftUpdate); leftUpdate();
+
+  // ── 논의 모드 (빔 화면 전용) ──
+  let focusIdx = -1;
+  const fposUpdate = () => document.getElementById('fpos').textContent = (focusIdx+1)+' / '+cards().length;
+  function setFocus(i){
+    const cs = cards(); if(!cs.length) return;
+    focusIdx = Math.max(0, Math.min(cs.length-1, i));
+    cs.forEach(c=>c.classList.remove('focus'));
+    const c = cs[focusIdx]; c.classList.add('focus');
+    document.body.classList.add('focusing');
+    c.scrollIntoView({block:'center', behavior:'smooth'});
+    fposUpdate();
+  }
+  function exitFocus(){ focusIdx=-1; document.body.classList.remove('focusing'); cards().forEach(c=>c.classList.remove('focus')); }
+  function toggleDone(c){ msgs.child(c.dataset.id).update({done: !c.classList.contains('done')}); }
+  wall.addEventListener('click', e=>{
+    const c = e.target.closest('.card'); if(!c) return;
+    if(e.target.classList.contains('del')){
+      if(confirm('이 의견을 삭제할까요?')) msgs.child(c.dataset.id).remove();
+      return;
+    }
+    if(isPhone()) return;
+    const i = cards().indexOf(c);
+    if(document.body.classList.contains('focusing') && i===focusIdx) toggleDone(c);
+    else setFocus(i);
+  });
+  document.addEventListener('keydown', e=>{
+    if(document.activeElement===text) return;
+    if(e.key==='ArrowRight'){ e.preventDefault(); setFocus(focusIdx<0 ? 0 : focusIdx+1); }
+    else if(e.key==='ArrowLeft'){ e.preventDefault(); setFocus(focusIdx<0 ? 0 : focusIdx-1); }
+    else if(e.key===' ' && focusIdx>=0){ e.preventDefault(); toggleDone(cards()[focusIdx]); }
+    else if(e.key==='Escape') exitFocus();
+    else if(e.key.toLowerCase()==='h') document.body.classList.toggle('wall');
+  });
+
+  // ── 모드: #wall (빔) · #admin (관리) ──
+  function applyMode(){
+    const h = location.hash;
+    document.body.classList.toggle('wall', h==='#wall');
+    document.body.classList.toggle('admin', h==='#admin');
+  }
+  applyMode(); window.addEventListener('hashchange', applyMode);
+  document.getElementById('lockBtn').onclick = () => cfg.child('locked').set(!locked);
+  document.getElementById('clearBtn').onclick = () => {
+    if(confirm('올라온 의견을 전부 지웁니다. 되돌릴 수 없습니다. 진행할까요?')) msgs.remove();
+  };
+</script>
+</body>
+</html>
