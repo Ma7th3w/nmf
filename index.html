@@ -3,175 +3,115 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>국립박물관문화재단 노조원들의 의견</title>
+<title>3PL 전환 업체 Q&A — 국립박물관문화재단</title>
 <style>
-  :root{
-    --bg:#0a0a0a; --card:#161616; --card-new:#1c1010;
-    --ink:#f5f5f5; --muted:#8a8a8a; --accent:#ff4d4d; --accent2:#ffb84d;
-    --shadow:0 20px 50px rgba(0,0,0,.45);
-  }
+  :root{ --bg:#f4f5f7; --card:#fff; --ink:#1d2330; --muted:#6b7280; --line:#e2e5ea; --accent:#1e5eff; --ok:#1f8a4c; --danger:#c62828; }
   *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0; background:#0a0a0a;
-    background-image:repeating-linear-gradient(0deg, rgba(255,255,255,.025) 0 1px, transparent 1px 48px);
-    color:var(--ink); font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
-    overflow:hidden;
-  }
-
-  /* ─── 상단 헤더 ─── */
-  header{
-    position:fixed; inset:0 0 auto 0; height:96px; padding:0 40px;
-    display:flex; align-items:center; justify-content:space-between; z-index:10;
-    background:linear-gradient(to bottom, rgba(10,10,10,.97), rgba(10,10,10,0));
-  }
-  h1{margin:0; font-size:46px; letter-spacing:-1.5px; font-weight:900; display:flex; align-items:center; gap:18px}
-  h1::before{content:""; width:14px; height:56px; background:var(--accent); flex:none}
-  h1 strong{color:var(--accent)}
-  h1 small{display:block; font-size:15px; color:var(--muted); font-weight:500; margin-top:6px; letter-spacing:0}
-  .counter{display:flex; align-items:baseline; gap:10px; flex:none}
-  .counter b{font-size:72px; font-weight:900; color:var(--accent); line-height:1; display:inline-block;
-             transition:transform .15s; font-variant-numeric:tabular-nums}
-  .counter b.tick{transform:scale(1.25) translateY(-4px)}
-  .counter span{color:var(--muted); font-size:16px}
-
-  /* ─── 벽 ─── */
-  #wall{
-    position:absolute; inset:96px 0 120px 0; padding:8px 40px 20px;
-    display:grid; grid-template-columns:repeat(3,1fr); gap:18px; align-content:start;
-    overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; scrollbar-color:#333 transparent;
-  }
-  #wall::-webkit-scrollbar{width:6px} #wall::-webkit-scrollbar-thumb{background:#333}
-  .card{
-    background:var(--card); border:0; border-left:8px solid #333; border-radius:0;
-    padding:20px 22px 14px; position:relative;
-  }
-  body.wall .card, body.admin .card{cursor:pointer}
-  .card.anim{animation:slam .32s cubic-bezier(.1,.9,.2,1) both}
-  .card .msg{font-size:26px; line-height:1.35; font-weight:800; word-break:keep-all; overflow-wrap:anywhere; white-space:pre-wrap}
-  .card .meta{margin-top:12px; display:flex; justify-content:space-between; color:var(--muted); font-size:14px}
-  .card.new{
-    background:var(--card-new); border-left-color:var(--accent);
-    animation:slam .32s cubic-bezier(.1,.9,.2,1) both, glow 1s steps(2,jump-none) 3;
-  }
-  .card.new::before{
-    content:"NEW"; position:absolute; top:0; right:0; background:var(--accent); color:#fff;
-    font-size:12px; font-weight:900; padding:4px 10px; letter-spacing:2px;
-  }
-  @keyframes slam{0%{opacity:0; transform:translateX(-40px) scaleX(1.06)} 100%{opacity:1; transform:none}}
-  @keyframes glow{0%,100%{background:var(--card-new)} 50%{background:#3a1212}}
-
-  /* ─── 헤드라인 띠 ─── */
-  #spot{
-    position:fixed; left:0; right:0; top:50%; transform:translateY(-50%) translateX(-100%); z-index:20;
-    padding:40px 60px; background:var(--accent); color:#fff;
-    opacity:0; pointer-events:none; transition:opacity .2s, transform .3s cubic-bezier(.1,.9,.2,1);
-    box-shadow:0 30px 80px rgba(0,0,0,.7);
-  }
-  #spot.show{opacity:1; transform:translateY(-50%) translateX(0)}
-  #spot .msg{font-size:56px; font-weight:900; line-height:1.2; letter-spacing:-1px; word-break:keep-all; overflow-wrap:anywhere; max-width:1400px}
-
-  /* ─── 하단 입력 ─── */
-  footer{
-    position:fixed; inset:auto 0 0 0; height:120px; padding:0 40px; z-index:10;
-    display:flex; align-items:center; gap:14px;
-    background:linear-gradient(to top, rgba(10,10,10,.98) 60%, rgba(10,10,10,0));
-  }
-  footer input, footer button{font:inherit; border-radius:0; border:2px solid #333}
-  footer input{background:rgba(255,255,255,.06); color:var(--ink); padding:16px 18px; font-size:18px; outline:none; flex:1; min-width:0}
-  footer input:focus{border-color:var(--accent)}
-  footer input:disabled{opacity:.5}
-  footer button{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:900; padding:16px 30px; cursor:pointer; font-size:18px; letter-spacing:1px; flex:none}
-  footer button:disabled{opacity:.4; cursor:default}
-  footer button:active{transform:scale(.97)}
-  #left{position:absolute; right:40px; bottom:4px; color:#555; font-size:12px}
-  #left.over{color:var(--accent); font-weight:700}
-
-  /* ─── 논의 모드 ─── */
-  body.focusing .card{opacity:.28; transition:opacity .25s}
-  body.focusing .card.focus{opacity:1; transform:scale(1.03); z-index:2;
-    border-left-color:var(--accent); background:#221010; box-shadow:0 0 0 3px var(--accent), 0 30px 60px rgba(0,0,0,.6)}
-  body.focusing .card.focus .msg{font-size:34px}
-  .card.done{border-left-color:#2e7d4f}
-  .card.done::after{content:"✓ 논의함"; position:absolute; top:0; right:0; background:#2e7d4f; color:#fff;
-    font-size:12px; font-weight:900; padding:4px 10px; letter-spacing:1px}
-  .card.done.new::before{display:none}
-  #focusbar{position:fixed; left:50%; bottom:130px; transform:translateX(-50%); z-index:12; display:none;
-    background:#000; border:2px solid var(--accent); color:var(--ink); padding:10px 18px; font-size:15px; font-weight:700; gap:18px}
-  body.focusing #focusbar{display:flex}
-  body.wall #focusbar{bottom:50px}
-  #focusbar span{color:var(--muted); font-weight:500}
-  #focusbar b{color:var(--accent)}
-
-  /* ─── 빔 화면 모드 (#wall 또는 H 키) ─── */
-  body.wall footer{display:none}
-  body.wall #wall{inset:96px 0 40px 0}
-  body.wall #hint{display:block}
-  #hint{display:none; position:fixed; left:40px; bottom:12px; color:#444; font-size:12px; z-index:10}
-
-  /* ─── 관리자 모드 (#admin) ─── */
-  .card .del{display:none; position:absolute; left:-8px; bottom:-2px; background:#333; color:#fff; border:0; font:inherit; font-size:12px; padding:3px 8px; cursor:pointer}
-  body.admin .card .del{display:block}
-  body.admin .card.done::after, body.admin .card.new::before{right:0}
-  #adminbar{display:none; position:fixed; top:100px; right:40px; z-index:12; gap:8px}
-  body.admin #adminbar{display:flex}
-  #adminbar button{font:inherit; font-size:13px; font-weight:700; padding:8px 12px; background:#000; color:var(--ink); border:2px solid #444; cursor:pointer}
-  #adminbar button.on{border-color:var(--accent); color:var(--accent)}
-
-  /* 빈 상태 · 연결 상태 */
-  #empty{position:absolute; inset:0; display:grid; place-items:center; color:var(--muted); font-size:22px; pointer-events:none}
-  #conn{position:fixed; left:40px; top:100px; z-index:12; font-size:12px; color:#555}
-  #conn.bad{color:var(--accent)}
-
-  /* ─── 폰 ─── */
-  @media (max-width:1100px){#wall{grid-template-columns:repeat(2,1fr)}}
-  @media (max-width:640px){
-    header{height:auto; padding:14px 16px; position:static; background:none; display:block}
-    h1{font-size:22px; gap:10px; letter-spacing:-.5px} h1::before{width:8px; height:34px}
-    h1 small{font-size:12px}
-    .counter{margin-top:6px} .counter b{font-size:28px} .counter span{font-size:12px}
-    #wall{position:fixed; inset:104px 0 84px 0; grid-template-columns:1fr; padding:8px 16px; gap:10px}
-    .card{padding:14px 14px 10px; border-left-width:6px} .card .msg{font-size:17px} .card .meta{font-size:12px; margin-top:8px}
-    #spot{padding:20px 18px} #spot .msg{font-size:24px}
-    footer{height:84px; padding:0 12px; gap:8px}
-    footer input{padding:12px 12px; font-size:16px} footer button{padding:12px 16px; font-size:15px}
-    #left{right:12px; bottom:2px}
-    #hint, #focusbar, #conn{display:none !important}
-    body.focusing .card{opacity:1} body.focusing .card.focus{transform:none; box-shadow:none} body.focusing .card.focus .msg{font-size:17px}
-  }
+  body{margin:0; background:var(--bg); color:var(--ink); font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif; line-height:1.5}
+  header{background:#fff; border-bottom:1px solid var(--line); padding:18px 20px}
+  header .in{max-width:860px; margin:0 auto}
+  h1{margin:0; font-size:22px; letter-spacing:-.5px}
+  h1 small{display:block; font-size:13px; color:var(--muted); font-weight:500; margin-top:4px}
+  main{max-width:860px; margin:0 auto; padding:16px 16px 60px}
+  nav{display:flex; gap:6px; margin:4px 0 14px}
+  nav button{flex:1; font:inherit; font-size:15px; font-weight:700; padding:12px 8px; background:#fff; border:1px solid var(--line); color:var(--muted); cursor:pointer; border-radius:8px}
+  nav button.on{background:var(--accent); border-color:var(--accent); color:#fff}
+  section{display:none} section.on{display:block}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:18px; margin-bottom:12px}
+  .notice{background:#fff8e6; border:1px solid #f3dca0; color:#6b4b00; border-radius:10px; padding:12px 14px; font-size:14px; margin-bottom:12px}
+  .notice b{color:#8a3b00}
+  label{display:block; font-size:13px; font-weight:700; color:var(--muted); margin:12px 0 6px}
+  input, textarea{width:100%; font:inherit; font-size:16px; padding:12px; border:1px solid #cfd4dc; border-radius:8px; outline:none; background:#fff; color:var(--ink)}
+  input:focus, textarea:focus{border-color:var(--accent)}
+  textarea{min-height:140px; resize:vertical}
+  .row{display:flex; gap:10px} .row > *{flex:1; min-width:0}
+  .btn{font:inherit; font-size:16px; font-weight:800; padding:13px 18px; border:0; border-radius:8px; cursor:pointer; background:var(--accent); color:#fff; width:100%; margin-top:14px}
+  .btn:disabled{opacity:.5; cursor:default}
+  .hint{font-size:12px; color:var(--muted); margin-top:6px}
+  .cnt{text-align:right; font-size:12px; color:var(--muted); margin-top:4px}
+  .cnt.over{color:var(--danger); font-weight:700}
+  .ok{display:none; border-left:6px solid var(--ok); background:#eef8f1; padding:14px 16px; border-radius:8px; margin-top:14px}
+  .ok.on{display:block}
+  .item{border:1px solid var(--line); border-radius:8px; padding:14px; margin-bottom:10px}
+  .item .q{white-space:pre-wrap; word-break:keep-all; overflow-wrap:anywhere; font-weight:700}
+  .item .meta{font-size:12px; color:var(--muted); margin-top:6px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap}
+  .ans{margin-top:10px; padding:12px 14px; background:#eef3ff; border-left:6px solid var(--accent); border-radius:8px; white-space:pre-wrap; word-break:keep-all; overflow-wrap:anywhere}
+  .wait{margin-top:10px; padding:10px 14px; background:#f7f7f8; border-left:6px solid #c9ced6; border-radius:8px; color:var(--muted); font-size:14px}
+  .badge{display:inline-block; font-size:12px; font-weight:800; padding:2px 8px; border-radius:999px; background:#e5e7eb; color:#374151}
+  .badge.ok{background:#dcfce7; color:#166534}
+  .faq{margin-bottom:10px}
+  .faq .qq{font-weight:800; cursor:pointer; display:flex; gap:8px; align-items:flex-start}
+  .faq .qq::before{content:"Q"; color:var(--accent); font-weight:900; flex:none}
+  .faq .aa{display:none; margin-top:10px; padding-left:22px; white-space:pre-wrap; word-break:keep-all; overflow-wrap:anywhere; color:#374151}
+  .faq.open .aa{display:block}
+  .err{color:var(--danger); font-size:14px; margin-top:10px; display:none}
+  .err.on{display:block}
+  #conn{font-size:12px; color:var(--muted); margin-top:6px}
+  #conn.bad{color:var(--danger)}
+  footer{text-align:center; font-size:12px; color:var(--muted); padding:20px}
+  @media (max-width:640px){ header{padding:14px 16px} h1{font-size:19px} .row{flex-direction:column; gap:0} }
 </style>
 </head>
 <body>
 
-<header>
-  <h1><span>국립박물관문화재단 <strong>노조원들의 의견</strong><small>폰으로 남기면 이 화면에 바로 올라옵니다 · 익명</small></span></h1>
-  <div class="counter"><b id="count">0</b><span>건의 의견</span></div>
-</header>
+<header><div class="in">
+  <h1>3PL(물류센터) 전환 관련 업체 Q&A<small>국립박물관문화재단 · 질문과 답변은 작성한 업체만 봅니다. 여러 업체에 공통되는 내용은 FAQ로 공개합니다.</small></h1>
+  <div id="conn">연결 중…</div>
+</div></header>
 
-<div id="conn">연결 중…</div>
-<div id="adminbar">
-  <button id="dlBtn">엑셀로 다운로드</button>
-  <button id="lockBtn">입력 잠금</button>
-  <button id="clearBtn">전체 초기화</button>
-</div>
+<main>
+  <nav>
+    <button data-tab="ask" class="on">질문하기</button>
+    <button data-tab="mine">내 질문·답변</button>
+    <button data-tab="faq">FAQ <span id="faqCount" class="badge">0</span></button>
+  </nav>
 
-<div id="wall"><div id="empty">첫 의견을 기다리고 있습니다…</div></div>
+  <!-- 질문하기 -->
+  <section id="ask" class="on">
+    <div class="notice">
+      <b>개인정보(이름·전화·이메일·주소 등)는 적지 마세요.</b> 업체명과 질문 내용만 남겨 주시면 됩니다.<br>
+      답변은 <b>"내 질문·답변"</b>에서 <b>같은 업체명과 비밀번호</b>로 확인합니다. 비밀번호를 잊으면 답변을 볼 수 없으니 메모해 두세요.
+    </div>
+    <div class="card">
+      <label for="company">업체명</label>
+      <input id="company" maxlength="60" placeholder="예: ○○상사" autocomplete="organization">
+      <label for="pw">비밀번호 <span style="font-weight:500">(4자 이상 · 답변 확인용)</span></label>
+      <input id="pw" type="password" maxlength="30" placeholder="처음 질문할 때 정하고, 다음부터 같은 걸 쓰세요" autocomplete="new-password">
+      <div class="hint">비밀번호는 저장되지 않습니다. 업체명과 비밀번호를 섞어 만든 암호값으로만 질문을 찾습니다.</div>
+      <label for="q">질문 내용</label>
+      <textarea id="q" maxlength="1000" placeholder="3PL(물류센터) 전환과 관련해 궁금한 점을 적어 주세요. (1,000자까지)"></textarea>
+      <div class="cnt" id="qcnt">0 / 1000</div>
+      <div class="err" id="askErr"></div>
+      <button class="btn" id="askBtn">질문 올리기</button>
+      <div class="ok" id="askOk">접수되었습니다. 답변이 등록되면 <b>"내 질문·답변"</b>에서 같은 업체명·비밀번호로 확인하세요. 같은 업체명·비밀번호로 질문을 더 올리면 한 곳에 모입니다.</div>
+    </div>
+  </section>
 
-<div id="spot"><div class="msg"></div></div>
+  <!-- 내 질문·답변 -->
+  <section id="mine">
+    <div class="card">
+      <div class="row">
+        <div><label for="mCompany">업체명</label><input id="mCompany" maxlength="60" autocomplete="organization"></div>
+        <div><label for="mPw">비밀번호</label><input id="mPw" type="password" maxlength="30" autocomplete="current-password"></div>
+      </div>
+      <div class="err" id="mineErr"></div>
+      <button class="btn" id="mineBtn">내 질문·답변 보기</button>
+    </div>
+    <div id="mineList"></div>
+  </section>
 
-<div id="hint">H 키: 입력창 표시/숨김 · 카드 클릭 또는 → 키: 하나씩 짚어가며 논의 · Space: 논의함 표시</div>
-<div id="focusbar"><b id="fpos">1 / 1</b><span>← → 이동</span><span>Space 논의함 표시</span><span>Esc 나가기</span></div>
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="card" id="faqList"><div class="hint">아직 공개된 FAQ가 없습니다.</div></div>
+  </section>
+</main>
 
-<footer>
-  <input id="text" placeholder="의견 남기기 (200자까지)" maxlength="200" autocomplete="off">
-  <button id="send">올리기</button>
-  <span id="left"></span>
-</footer>
+<footer>국립박물관문화재단 정보화 담당 · 이 페이지는 3PL 전환 안내 기간에만 운영됩니다</footer>
 
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 <script>
-  // ── Firebase ──
+  // ── Firebase (노조 의견벽과 같은 프로젝트. 웹 API 키는 공개값이고, 접근 통제는 DB 규칙(database.rules.json)이 한다) ──
   firebase.initializeApp({
     apiKey: "AIzaSyA0y8IR9HWuh11IYfMa8eWh57GCSgI5IjQ",
     authDomain: "nmfnmf-9e3e0.firebaseapp.com",
@@ -182,165 +122,88 @@
     appId: "1:758942522691:web:92a7d3eace6e3c568a63f6"
   });
   const db = firebase.database();
-  const msgs = db.ref('messages');
-  const cfg  = db.ref('config');
-
-  // ── DOM ──
-  const wall = document.getElementById('wall');
-  const empty = document.getElementById('empty');
-  const countEl = document.getElementById('count');
-  const spot = document.getElementById('spot');
-  const text = document.getElementById('text');
-  const sendBtn = document.getElementById('send');
-  const conn = document.getElementById('conn');
-  const isPhone = () => window.innerWidth <= 640;
-  let spotTimer = null, ready = false, locked = false;
+  const $ = id => document.getElementById(id);
 
   function esc(s){return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-  function hhmm(ts){const d=new Date(ts||Date.now());return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
-  const cards = () => [...wall.querySelectorAll('.card')];
-  function updateCount(){ const n=cards().length; countEl.textContent=n; empty.style.display = n?'none':'grid'; }
-
-  // ── 카드 렌더 ──
-  function render(id, m, live){
-    const card = document.createElement('div');
-    card.className = 'card' + (live ? ' new' : ' anim') + (m.done ? ' done' : '');
-    card.dataset.id = id;
-    card.innerHTML = `<div class="msg">${esc(m.text)}</div>
-                      <div class="meta"><span></span><span>${hhmm(m.ts)}</span></div>
-                      <button class="del" title="삭제">삭제</button>`;
-    wall.prepend(card);
-    updateCount();
-    if(!live) return;
-
-    if(focusIdx>=0){ focusIdx++; fposUpdate(); }
-    else wall.scrollTo({top:0, behavior:'smooth'});
-    setTimeout(()=>card.classList.remove('new'), 5000);
-    countEl.classList.add('tick'); setTimeout(()=>countEl.classList.remove('tick'), 250);
-    if(!isPhone()){
-      spot.querySelector('.msg').textContent = m.text;
-      spot.classList.add('show');
-      clearTimeout(spotTimer); spotTimer = setTimeout(()=>spot.classList.remove('show'), 5000);
-    }
+  function when(ts){ const d=new Date(ts||0); const p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+  function norm(s){ return String(s||'').replace(/\s+/g,'').toLowerCase(); }   // 업체명 띄어쓰기·대소문자 차이 무시
+  async function keyOf(company, pw){
+    // 질문 보관 위치 = SHA-256(정규화한 업체명 + ':' + 비밀번호). 비밀번호는 어디에도 저장하지 않는다.
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(norm(company) + ':' + pw));
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
   }
+  function showErr(id, msg){ const e=$(id); e.textContent=msg||''; e.classList.toggle('on', !!msg); }
 
-  // ── 실시간 구독 ──
-  msgs.on('child_added', snap => render(snap.key, snap.val()||{}, ready));
-  msgs.once('value', () => { ready = true; updateCount(); });
-  msgs.on('child_removed', snap => {
-    const c = wall.querySelector(`.card[data-id="${snap.key}"]`); if(!c) return;
-    const i = cards().indexOf(c); c.remove(); updateCount();
-    if(focusIdx>=0){ if(i<focusIdx) focusIdx--; else if(i===focusIdx) exitFocus(); fposUpdate(); }
+  // ── 탭 ──
+  document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+    document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('section').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); $(b.dataset.tab).classList.add('on');
+    history.replaceState(null,'','#'+b.dataset.tab);
   });
-  msgs.on('child_changed', snap => {
-    const c = wall.querySelector(`.card[data-id="${snap.key}"]`); if(!c) return;
-    c.classList.toggle('done', !!(snap.val()||{}).done);
-  });
-  cfg.child('locked').on('value', snap => {
-    locked = !!snap.val();
-    text.disabled = locked; sendBtn.disabled = locked;
-    text.placeholder = locked ? '의견 접수가 마감되었습니다' : '의견 남기기 (200자까지)';
-    document.getElementById('lockBtn').classList.toggle('on', locked);
-    document.getElementById('lockBtn').textContent = locked ? '입력 잠금 해제' : '입력 잠금';
-  });
-  db.ref('.info/connected').on('value', snap => {
-    const ok = !!snap.val();
-    conn.textContent = ok ? '● 실시간 연결됨' : '○ 연결 끊김 — 재접속 중';
-    conn.classList.toggle('bad', !ok);
-  });
+  if(['#mine','#faq'].includes(location.hash)) document.querySelector(`nav button[data-tab="${location.hash.slice(1)}"]`).click();
 
-  // ── 입력 ──
-  let sending = false;
-  function send(){
-    const t = text.value.trim();
-    if(!t || t.length<2 || locked || sending) return;
-    sending = true; sendBtn.disabled = true;
-    msgs.push({text: t.slice(0,200), ts: firebase.database.ServerValue.TIMESTAMP, done:false})
-      .then(()=>{ text.value=''; leftUpdate(); })
-      .catch(()=>alert('전송 실패. 다시 시도해 주세요.'))
-      .finally(()=>{ sending=false; sendBtn.disabled = locked; text.focus(); });
-  }
-  sendBtn.onclick = send;
-  text.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); send(); } });
-  const leftEl = document.getElementById('left');
-  const leftUpdate = () => {
-    const n = text.value.length, max = 200;
-    leftEl.textContent = n >= max ? '200자까지만 입력할 수 있습니다' : n + ' / ' + max;
-    leftEl.classList.toggle('over', n >= max);
+  db.ref('.info/connected').on('value', s => { const ok=!!s.val(); $('conn').textContent = ok?'● 연결됨':'○ 연결 끊김 — 다시 연결 중'; $('conn').classList.toggle('bad',!ok); });
+
+  // ── 질문하기 ──
+  $('q').addEventListener('input', () => { const n=$('q').value.length; $('qcnt').textContent=n+' / 1000'; $('qcnt').classList.toggle('over', n>=1000); });
+  let busy=false;
+  $('askBtn').onclick = async () => {
+    const company=$('company').value.trim(), pw=$('pw').value, q=$('q').value.trim();
+    showErr('askErr',''); $('askOk').classList.remove('on');
+    if(company.length<1) return showErr('askErr','업체명을 입력해 주세요.');
+    if(pw.length<4) return showErr('askErr','비밀번호는 4자 이상이어야 합니다.');
+    if(q.length<5) return showErr('askErr','질문 내용을 5자 이상 적어 주세요.');
+    if(busy) return; busy=true; $('askBtn').disabled=true; $('askBtn').textContent='올리는 중…';
+    try{
+      const key = await keyOf(company, pw);
+      const tref = db.ref('threads/'+key);
+      const exists = (await tref.child('company').once('value')).exists();
+      const qid = tref.child('items').push().key;
+      const upd = {}; upd['items/'+qid] = {q, ts: firebase.database.ServerValue.TIMESTAMP};
+      if(!exists) upd['company'] = company;
+      await tref.update(upd);
+      $('askOk').classList.add('on'); $('q').value=''; $('qcnt').textContent='0 / 1000';
+      $('mCompany').value=company; $('mPw').value=pw;   // 바로 확인할 수 있게 채워 둠
+      $('askOk').scrollIntoView({behavior:'smooth', block:'center'});
+    }catch(e){ console.error(e); showErr('askErr','올리지 못했습니다. 잠시 후 다시 시도해 주세요. ('+(e&&e.code?e.code:'오류')+')'); }
+    finally{ busy=false; $('askBtn').disabled=false; $('askBtn').textContent='질문 올리기'; }
   };
-  text.addEventListener('input', leftUpdate); leftUpdate();
 
-  // ── 논의 모드 (빔 화면 전용) ──
-  let focusIdx = -1;
-  const fposUpdate = () => document.getElementById('fpos').textContent = (focusIdx+1)+' / '+cards().length;
-  function setFocus(i){
-    const cs = cards(); if(!cs.length) return;
-    focusIdx = Math.max(0, Math.min(cs.length-1, i));
-    cs.forEach(c=>c.classList.remove('focus'));
-    const c = cs[focusIdx]; c.classList.add('focus');
-    document.body.classList.add('focusing');
-    c.scrollIntoView({block:'center', behavior:'smooth'});
-    fposUpdate();
-  }
-  function exitFocus(){ focusIdx=-1; document.body.classList.remove('focusing'); cards().forEach(c=>c.classList.remove('focus')); }
-  function toggleDone(c){ msgs.child(c.dataset.id).update({done: !c.classList.contains('done')}); }
-  wall.addEventListener('click', e=>{
-    const c = e.target.closest('.card'); if(!c) return;
-    if(e.target.classList.contains('del')){
-      if(confirm('이 의견을 삭제할까요?')) msgs.child(c.dataset.id).remove();
-      return;
-    }
-    if(!priv() || isPhone()) return;
-    const i = cards().indexOf(c);
-    if(document.body.classList.contains('focusing') && i===focusIdx) toggleDone(c);
-    else setFocus(i);
-  });
-  const priv = () => location.hash==='#wall' || location.hash==='#admin';
-  document.addEventListener('keydown', e=>{
-    if(document.activeElement===text || !priv()) return;
-    if(e.key==='ArrowRight'){ e.preventDefault(); setFocus(focusIdx<0 ? 0 : focusIdx+1); }
-    else if(e.key==='ArrowLeft'){ e.preventDefault(); setFocus(focusIdx<0 ? 0 : focusIdx-1); }
-    else if(e.key===' ' && focusIdx>=0){ e.preventDefault(); toggleDone(cards()[focusIdx]); }
-    else if(e.key==='Escape') exitFocus();
-    else if(e.key.toLowerCase()==='h') document.body.classList.toggle('wall');
-  });
-
-  // ── 모드: #wall (빔) · #admin (관리) ──
-  function applyMode(){
-    const h = location.hash;
-    document.body.classList.toggle('wall', h==='#wall');
-    document.body.classList.toggle('admin', h==='#admin');
-    if(!priv()) exitFocus();
-  }
-  applyMode(); window.addEventListener('hashchange', applyMode);
-  document.getElementById('lockBtn').onclick = () => cfg.child('locked').set(!locked);
-  document.getElementById('dlBtn').onclick = () => {
-    const btn = document.getElementById('dlBtn'); btn.disabled = true; btn.textContent = '만드는 중…';
-    const run = () => msgs.once('value', snap => {
-      const rows = [['번호','시각','의견','논의함']];
-      let n = 0;
-      snap.forEach(ch => {
-        const m = ch.val()||{}; n++;
-        const d = new Date(m.ts||0);
-        const when = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+hhmm(m.ts);
-        rows.push([n, when, m.text||'', m.done?'O':'']);
+  // ── 내 질문·답변 ──
+  let mineRef=null;
+  $('mineBtn').onclick = async () => {
+    const company=$('mCompany').value.trim(), pw=$('mPw').value;
+    showErr('mineErr',''); $('mineList').innerHTML='';
+    if(company.length<1) return showErr('mineErr','업체명을 입력해 주세요.');
+    if(pw.length<4) return showErr('mineErr','비밀번호를 입력해 주세요.');
+    $('mineBtn').disabled=true;
+    try{
+      const key=await keyOf(company,pw);
+      if(mineRef) mineRef.off();
+      mineRef = db.ref('threads/'+key);
+      const first = await mineRef.once('value');
+      if(!first.exists()) { showErr('mineErr','해당 업체명·비밀번호로 올린 질문이 없습니다. 띄어쓰기는 무시되니 비밀번호를 확인해 주세요.'); return; }
+      mineRef.on('value', snap => {   // 답변이 달리면 화면이 바로 바뀜
+        const t=snap.val()||{}; const items=Object.entries(t.items||{}).map(([id,v])=>({id,...v})).sort((a,b)=>(b.ts||0)-(a.ts||0));
+        $('mineList').innerHTML = `<div class="hint" style="margin:0 0 8px">${esc(t.company||company)} · 질문 ${items.length}건</div>` +
+          items.map(it=>`<div class="item"><div class="q">${esc(it.q||'')}</div><div class="meta"><span>질문 ${esc(when(it.ts))}</span>${it.a?'<span class="badge ok">답변 '+esc(when(it.ats))+'</span>':'<span class="badge">답변 대기</span>'}</div>`+
+            (it.a?`<div class="ans">${esc(it.a)}</div>`:`<div class="wait">아직 답변 전입니다. 등록되면 이 화면에 바로 나타납니다.</div>`)+`</div>`).join('');
       });
-      const ws = XLSX.utils.aoa_to_sheet(rows);
-      ws['!cols'] = [{wch:6},{wch:18},{wch:80},{wch:8}];
-      const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, '의견');
-      const t = new Date();
-      XLSX.writeFile(wb, '노조원_의견_'+t.getFullYear()+String(t.getMonth()+1).padStart(2,'0')+String(t.getDate()).padStart(2,'0')+'_'+String(t.getHours()).padStart(2,'0')+String(t.getMinutes()).padStart(2,'0')+'.xlsx');
-      btn.disabled = false; btn.textContent = '엑셀로 다운로드';
-    });
-    if(window.XLSX) return run();
-    const sc = document.createElement('script');
-    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-    sc.onload = run; sc.onerror = () => { alert('엑셀 모듈을 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.'); btn.disabled=false; btn.textContent='엑셀로 다운로드'; };
-    document.head.appendChild(sc);
+    }catch(e){ console.error(e); showErr('mineErr','조회하지 못했습니다. 잠시 후 다시 시도해 주세요.'); }
+    finally{ $('mineBtn').disabled=false; }
   };
-  document.getElementById('clearBtn').onclick = () => {
-    if(confirm('올라온 의견을 전부 지웁니다. 되돌릴 수 없습니다. 진행할까요?')) msgs.remove();
-  };
+  $('mPw').addEventListener('keydown', e=>{ if(e.key==='Enter') $('mineBtn').click(); });
+
+  // ── FAQ ──
+  db.ref('faq').orderByChild('ts').on('value', snap => {
+    const items=[]; snap.forEach(ch=>items.push(ch.val()||{})); items.reverse();
+    $('faqCount').textContent=items.length;
+    $('faqList').innerHTML = items.length
+      ? items.map(f=>`<div class="faq"><div class="qq"><span>${esc(f.q||'')}</span></div><div class="aa">${esc(f.a||'')}</div></div>`).join('')
+      : '<div class="hint">아직 공개된 FAQ가 없습니다.</div>';
+    $('faqList').querySelectorAll('.faq .qq').forEach(el=>el.onclick=()=>el.parentElement.classList.toggle('open'));
+  });
 </script>
 </body>
 </html>
