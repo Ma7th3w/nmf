@@ -197,7 +197,7 @@
 
   // ── FAQ ──
   db.ref('faq').orderByChild('ts').on('value', snap => {
-    const items=[]; snap.forEach(ch=>items.push(ch.val()||{})); items.reverse();
+    const items=[]; snap.forEach(ch=>{ items.push(ch.val()||{}); }); items.reverse();
     $('faqCount').textContent=items.length;
     $('faqList').innerHTML = items.length
       ? items.map(f=>`<div class="faq"><div class="qq"><span>${esc(f.q||'')}</span></div><div class="aa">${esc(f.a||'')}</div></div>`).join('')
